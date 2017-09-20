@@ -7,6 +7,29 @@ import configmy; CFG= configmy.get() #CFG is python dictionnary containing the c
 
 Then we can acces with :
 
-CFG.github_login CFG.ROOTFOLDER CFG.aws_login CFG.selenium_folder CFG.JAVA_HOME
 
-Config is define with a dict embed in python file, and dynamically selection based on OS_NAME, USER_NAME, Python_version
+CFG.github_login
+CFG.ROOTFOLDER
+CFG.aws_login
+CFG.selenium_folder
+CFG.JAVA_HOME
+
+
+
+Config is define with a dict embed in python file, and dynamically selection
+based on OS_NAME, USER_NAME, Python_version
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

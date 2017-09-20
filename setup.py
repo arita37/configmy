@@ -7,8 +7,9 @@ import os
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.dirname(__file__))  # load anyconfig from this dir.
 
+#########################
+sys.path.insert(0, os.path.dirname(__file__))  # load anyconfig from this dir.
 
 
 # For daily snapshot versioning mode:
@@ -106,7 +107,7 @@ setup(name=PACKAGE,
       author="Kevin Noel",
       author_email="",
       license="MIT",
-      url="https://github.com/ssato/python-anyconfig",
+      url="https://github.com/arita37/configmy",
       classifiers=_CLASSIFIERS,
       packages=["anyconfig"],
       include_package_data=True,
@@ -114,8 +115,11 @@ setup(name=PACKAGE,
           "srpm": SrpmCommand,
           "rpm":  RpmCommand,
       },
-      entry_points=open(os.path.join(os.curdir,
-                                     "pkg/entry_points.txt")).read(),
+      entry_points=open(os.path.join(os.curdir, "pkg/entry_points.txt")).read(),
       data_files=data_files)
 
 # vim:sw=4:ts=4:et:
+
+
+
+
