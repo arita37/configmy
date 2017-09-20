@@ -1,20 +1,99 @@
-#
-# Copyright (C) 2012 - 2017 Satoru SATOH <ssato @ redhat.com>
-# License: MIT
-#
-"""Misc utility routines for anyconfig module.
-"""
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from importlib import import_module
+from pkgutil import walk_packages
+import builtins, operator, inspect, future
+import pandas as pd, regex, past, ast, re, math,  os, sys, glob
 
-import collections
-import glob
-import os.path
-import types
-
-import anyconfig.compat
+from collections import OrderedDict
+from attrdict import AttrDict as dict2
 
 
-def get_file_extension(file_path):
+####################################################################################################
+__path__= '/aapackage/codesource'
+__version__= "1.0.0"
+__file__= "moduleInspect.py"
+
+
+
+
+####################################################################################################
+
+
+def get(  outputs=["ALL", "CURR", "DIRCWD",]):
+    pass
+
+
+
+def set() :
+    pass
+
+'''
+https://gist.github.com/gboeing/dcfaf5e13fad16fc500717a3a324ec17
+
+
+Set up pypi
+Create a file in the home directory called ~/.pypirc with contents:
+[distutils]
+index-servers = pypi
+
+
+
+[pypi]
+repository = https://pypi.python.org/pypi
+username = YourPyPiUsername
+password = YourPyPiPassword
+Build, register, and upload to pypi
+
+
+
+Open terminal window and change directory to /project/
+Then run setup.py with sdist to build a source distribution and bdist_wheel to build a wheel (with --universal flag if your package is Python 2/3 universal). Then use twine to register it and upload to pypi.
+python setup.py sdist bdist_wheel --universal
+twine register dist/project-x.y.z.tar.gz
+twine register dist/mypkg-0.1-py2.py3-none-any.whl
+twine upload dist/*
+Build and upload subsequent updates to pypi
+
+
+
+Update the change log and edit the version number in setup.py and package/__init__.py.
+Open terminal window and change directory to /project/ then run setup.py with sdist to build a source distribution and bdist_wheel to build a wheel (with --universal flag if your package is Python 2/3 universal). Remove old versions from /project/dist/ and then use twine to upload to pypi.
+python setup.py sdist bdist_wheel --universal
+twine upload dist/*
+
+
+
+Release your code on GitHub
+To tag your current commit as a released version, run:
+
+git tag -a v0.1 -m "annotation for this release"
+git push origin --tags
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################################
+def os_file_get_file_extension(file_path):
     """
     >>> get_file_extension("/a/b/c")
     ''
@@ -37,7 +116,7 @@ def sglob(files_pattern):
     return sorted(glob.glob(files_pattern))
 
 
-def is_iterable(obj):
+def obj_is_iterable(obj):
     """
     >>> is_iterable([])
     True
@@ -62,7 +141,7 @@ def is_iterable(obj):
          bool(getattr(obj, "next", False)))
 
 
-def concat(xss):
+def np_list_concat(xss):
     """
     Concatenates a list of lists.
 
@@ -84,9 +163,8 @@ def concat(xss):
     return list(anyconfig.compat.from_iterable(xs for xs in xss))
 
 
-def normpath(path):
+def os_file_normpath(path):
     """Normalize path.
-
     - eliminating double slashes, etc. (os.path.normpath)
     - ensure paths contain ~[user]/ expanded.
 
@@ -95,17 +173,16 @@ def normpath(path):
     return os.path.normpath(os.path.expanduser(path) if '~' in path else path)
 
 
-def is_path(path_or_stream):
+def os_folder_is_path(path_or_stream):
     """
     Is given object `path_or_stream` a file path?
-
     :param path_or_stream: file path or stream, file/file-like object
     :return: True if `path_or_stream` is a file path
     """
-    return isinstance(path_or_stream, anyconfig.compat.STR_TYPES)
+    return isinstance(path_or_stream, str)
 
 
-def get_path_from_stream(maybe_stream):
+def os_get_path_from_stream(maybe_stream):
     """
     Try to get file path from given stream `stream`.
 
@@ -130,10 +207,9 @@ def get_path_from_stream(maybe_stream):
     return maybe_path
 
 
-def _try_to_get_extension(path_or_strm):
+def os_file_try_to_get_extension(path_or_strm):
     """
     Try to get file extension from given path or file object.
-
     :return: File extension or None
     """
     path = get_path_from_stream(path_or_strm)
@@ -143,7 +219,7 @@ def _try_to_get_extension(path_or_strm):
     return get_file_extension(path) or None
 
 
-def are_same_file_types(paths):
+def os_file_are_same_file_types(paths):
     """
     Are given (maybe) file paths same type (extension) ?
 
@@ -187,7 +263,7 @@ def _norm_paths_itr(paths, marker='*'):
             yield path
 
 
-def norm_paths(paths, marker='*'):
+def os_file_norm_paths(paths, marker='*'):
     """
     :param paths:
         A glob path pattern string, or a list consists of path strings or glob
@@ -228,7 +304,7 @@ def noop(val, *args, **kwargs):
 _LIST_LIKE_TYPES = (collections.Iterable, collections.Sequence)
 
 
-def is_dict_like(obj):
+def obj_is_dict_like(obj):
     """
     :param obj: Any object behaves like a dict.
 
@@ -242,7 +318,7 @@ def is_dict_like(obj):
     return isinstance(obj, (dict, collections.Mapping))  # any others?
 
 
-def is_namedtuple(obj):
+def obj_is_namedtuple(obj):
     """
     >>> p0 = collections.namedtuple("Point", "x y")(1, 2)
     >>> is_namedtuple(p0)
@@ -253,7 +329,7 @@ def is_namedtuple(obj):
     return isinstance(obj, tuple) and hasattr(obj, "_asdict")
 
 
-def is_list_like(obj):
+def obj_is_list_like(obj):
     """
     >>> is_list_like([])
     True
@@ -277,7 +353,7 @@ def is_list_like(obj):
         not (isinstance(obj, anyconfig.compat.STR_TYPES) or is_dict_like(obj))
 
 
-def filter_options(keys, options):
+def np_dict_filter(keys, options):
     """
     Filter `options` with given `keys`.
 
@@ -292,3 +368,80 @@ def filter_options(keys, options):
     return dict((k, options[k]) for k in keys if k in options)
 
 # vim:sw=4:ts=4:et:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################################################################################
+global IIX; IIX=0
+def pprint(a): global IIX; IIX+= 1; print("\n--" + str(IIX) + ": " + a, flush=True)
+
+if __name__ == "__main__"  :
+  import argparse
+  ppa = argparse.ArgumentParser()
+  ppa.add_argument('--action', type=str, default= ''  ,       help=" unit_test")
+  ppa.add_argument('--module', type=str, default= ''  ,       help=" unit_test")
+  arg = ppa.parse_args()
+
+
+
+if __name__ == "__main__" and  arg.action != ''  and  arg.module != '' :
+    print("Running Task")
+    globals()[arg.action](arg.module)   #Execute command
+
+
+
+if __name__ == "__main__" and  arg.action == 'test' :
+    pprint('### Unit Tests')
+    #os_folder_create("/ztest")
+
+    pprint("module_doc_write")
+
+
+    pprint("module_signature_write")
+
+
+    pprint("module_unitest_write")
+
+    pprint("module_unitest_write: module name")
+
+    pprint("module_signature_compare: version between 2 docs.")
+
+
+    pprint("module Github Donwload")
+    #df= github_code_search(keywords= ["import jedi",   "jedi.Script(" ], outputfolder= os.getcwd()+"/tmp/", browser="",
+    #                       page_start=25, page_end= 25, isreturn_df=1, isdebug=1)
+    #print( len(df), df.dtypes )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

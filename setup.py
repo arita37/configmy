@@ -3,10 +3,11 @@ from setuptools import setup, Command
 
 import glob
 import os.path
-import os
-import subprocess
-import sys
+import os, subprocess, sys
 
+
+VERSION= "0.1"
+PACKAGE= "one"
 
 #########################
 sys.path.insert(0, os.path.dirname(__file__))  # load anyconfig from this dir.
@@ -20,13 +21,11 @@ if os.environ.get("_SNAPSHOT_BUILD", None) is not None:
 
 _LONG_DESC = """
 configmy [#]_ is a `MIT licensed <http://opensource.org/licenses/MIT>`_
-python library provides common APIs to access to configuration files in various
-formats with some useful features such as contents merge, templates and schema
-validation/generation support.
+python library to access config
 
-- Home: https://github.com/ssato/python-anyconfig
 
-- PyPI: https://pypi.python.org/pypi/anyconfig
+- Home: 
+- PyPI: 
 
 
 .. [#] This name took an example from the 'anydbm' python standard library.
@@ -47,8 +46,8 @@ class SrpmCommand(Command):
     build_stage = "s"
 
     curdir = os.path.abspath(os.curdir)
-    rpmspec = os.path.join(curdir, "pkg/package.spec")
-    gen_readme = os.path.join(curdir, "pkg/gen-readme.sh")
+    # rpmspec = os.path.join(curdir, "pkg/package.spec")
+    # gen_readme = os.path.join(curdir, "pkg/gen-readme.sh")
 
     def initialize_options(self):
         pass
@@ -112,8 +111,8 @@ setup(name=PACKAGE,
       packages=["anyconfig"],
       include_package_data=True,
       cmdclass={
-          "srpm": SrpmCommand,
-          "rpm":  RpmCommand,
+          #"srpm": #SrpmCommand,
+          #"rpm":  RpmCommand,
       },
       entry_points=open(os.path.join(os.curdir, "pkg/entry_points.txt")).read(),
       data_files=data_files)
