@@ -5,24 +5,24 @@ from __future__ import print_function
 from importlib import import_module
 from pkgutil import walk_packages
 import builtins, operator, inspect, future
-####################################################################################################
+import pandas as pd, regex, past, ast, re, math,  os, sys, glob
+import platform
 
-import regex, past, ast, re,   os, sys, glob, platform
 from collections import OrderedDict
 from attrdict import AttrDict as dict2
 
 
 ####################################################################################################
-#__path__= '/'
+__path__= '/'
 #__version__= "1.0.0"
-#__file__= "configmy.py"
+__file__= "configmy.py"
 __all__ = ['get_environ_details', 'get_config_from_environ', 'get', 'set']
+
+
 CONFIGMY_ROOT_FILE= "CONFIGMY_ROOT_FILE"
 
 
 
-
-####################################################################################################
 def zdoc() :
  print('''
 #Test
@@ -42,9 +42,6 @@ import configmy; CFG, DIRCWD= configmy.get(output= ["_CFG", "DIRCWD"]);
 
 ''')
 
- with open("ztest/test_config.py", "r") as f1 :
-    ff1= f1.read()
- print(ff1)
 
 
 ####################################################################################################
@@ -53,14 +50,13 @@ def get_environ_details(isprint=0):
   Calculate environnment details
   platform.system() #returns the base system, in your case Linux
   platform.release() #returns release version
-  Dynamic release and data
+  Dynamic release
  '''
  CFG   = {'os': sys.platform[:3],
           'username': os.path.expanduser('~').split("\\")[-1].split("/")[-1],
           "pythonversion":      str(sys.version_info.major),
           "pythonversion_full": str(sys.version_info),
           'os_release' :        str(platform.release())
-
           }
 
  if isprint :  print(CFG); return CFG
@@ -129,21 +125,15 @@ def get(config_file="_ROOT", method0=["os", "username"], output=["_CFG", "DIRCWD
 
     CFG=       get_environ_details()
     dd_config= get_config_from_environ(CFG, dd_config_all, method0=method0)
-    dd_config.update(CFG)    #Add system parameters os, system
     dd_config= dict2(dd_config)
 
 
-    dd_config_all.update(CFG)
-    dd_config_all= dict2(dd_config_all)
-
-
-    #################################################################################
+    ######################################################################
     output_tuple= ()
     for x in output :
       if x[0] != "_" :  output_tuple= (output_tuple + (dd_config[x],) )   #Ask directly items argument
       if x == "_CFG" :  output_tuple= (output_tuple + (dd_config,))
       if x == "_ALL" :  output_tuple= (output_tuple + (dd_config_all,))
-
 
     return output_tuple
 
@@ -165,7 +155,6 @@ def set(configmy_root_file="") :
     '''
     Do Command Line to set configmy root file in   os.environ['CONFIGMY_ROOT_FILE'] 
     '''
-    print("Setuping PERMANENTLY   'CONFIGMY_ROOT_FILE' in Env Var ")
     CFG=      get_environ_details(isprint=0)
     env_var = CONFIGMY_ROOT_FILE
 
@@ -174,7 +163,7 @@ def set(configmy_root_file="") :
     if CFG["os"] == "win" :
       os.system("SETX {0} {1} /M".format(env_var, configmy_root_file))
       os.system("SETX {0} {1} ".format(env_var, configmy_root_file))
-      print("You need to reboot Windows to get the Env Var visible, permanently")
+      print("You need to reboot Windows to get the Env Var visible, Permanently")
 
 
     if CFG["os"] == "lin" :
@@ -204,7 +193,6 @@ def  ztest():
 global IIX; IIX=0
 def pprint(a): global IIX; IIX+= 1; print("\n--" + str(IIX) + ": " + a, flush=True)
 
-
 if __name__ == "__main__"  :
   import argparse
   ppa = argparse.ArgumentParser()
@@ -213,9 +201,11 @@ if __name__ == "__main__"  :
   arg = ppa.parse_args()
 
 
+
 if __name__ == "__main__" and  arg.action != ''  and  arg.module != '' :
     print("Running Task")
     globals()[arg.action](arg.module)   #Execute command
+
 
 
 if __name__ == "__main__" and  arg.action == 'test' :
@@ -248,6 +238,12 @@ if __name__ == "__main__" and  arg.action == 'test' :
 
 
 '''
+import configmy; CFG, DIRCWD= configmy.a.get()
+
+
+print(configmy)
+
+
 
 Open terminal window and change directory to /project/
   python setup.py sdist bdist_wheel --universal

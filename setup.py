@@ -1,16 +1,41 @@
 from __future__ import absolute_import
 from setuptools import setup, Command
 
-import glob
+import glob, os, subprocess, sys
 import os.path
-import os, subprocess, sys
+
+global VERSION, PACKAGE
+
+VERSION = "0.14.11"  
+PACKAGE = "configmy"
 
 
-VERSION= "0.1"
-PACKAGE= "one"
+'''
+  UPLOAD to Pypi 
+  1) Update the change log and edit the version number in setup.py   VERSION
+  
+  2) Open terminal window and change directory to 
+     D:\_devs\Python01\project27\github\configmy
+     activate tf_gpu_12    (conda environnment).
+     
+  3) Write down
+      python setup.py sdist --formats=zip upload
+     
+     
+     python setup.py sdist bdist_wheel --universal
+     twine upload dist/*0.13.9*                
 
-#########################
-sys.path.insert(0, os.path.dirname(__file__))  # load anyconfig from this dir.
+     pip install configmy==0.13.9
+
+http://5minutes.youkidea.com/howto-deploy-python-package-on-pypi-with-github-and-travis.html
+
+https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/
+
+'''
+
+
+##########################################################################################
+sys.path.insert(0, os.path.dirname(__file__))  # load  from this dir.
 
 
 # For daily snapshot versioning mode:
@@ -21,27 +46,50 @@ if os.environ.get("_SNAPSHOT_BUILD", None) is not None:
 
 _LONG_DESC = """
 configmy [#]_ is a `MIT licensed <http://opensource.org/licenses/MIT>`_
-python library to access config
+
+python library to access config in  a very flexible way
+
+- Home:  https://github.com/arita37/configmy
+- PyPI:  https://pypi.python.org/pypi/configmy
 
 
-- Home: 
-- PyPI: 
+#Test
+Sometimes, you have hard coded paths, dependant on system environnment (linux, windows).
+Doing  if os.system ="linux" :  is boring.
+
+Configmy load dynamically env. with a single lineof code (!),
+Your code can work anywhere, you just need to change the master config file
+and the paths inside.
+
+Example :
+import configmy
+configmy.get("configmy/ztest/test_config.py", output= ["_CFG", "DIRCWD",])
 
 
-.. [#] This name took an example from the 'anydbm' python standard library.
+### Set the master file in ENVIRONNEMNT variable
+configmy.set( "configmy/ztest/test_config.py") 
+CFG, DIRCWD= configmy.get(output= ["_CFG", "DIRCWD",], method)
+
+CFG: a dict containing all the needed paths
+DIRCWD:  Main path
+
+
+In CFG your get the configuration based on os_usernamr tag
+( win_Myuser0
+  lin_Myuser1
+  mac_Myuser2
+
+
+
 """
 
 def list_filepaths(tdir):
     return [f for f in glob.glob(os.path.join(tdir, '*')) if os.path.isfile(f)]
 
 
-# TBD:
-# data_files = [("share/man/man1", list_filepaths("docs/"))]
-data_files = [("share/man/man1", ["docs/anyconfig_cli.1"])]
 
 
 class SrpmCommand(Command):
-
     user_options = []
     build_stage = "s"
 
@@ -75,7 +123,6 @@ class SrpmCommand(Command):
 
 
 class RpmCommand(SrpmCommand):
-
     build_stage = "b"
 
 
@@ -100,24 +147,29 @@ _CLASSIFIERS = ["Development Status :: 4 - Beta",
 
 setup(name=PACKAGE,
       version=VERSION,
-      description=("Library provides common APIs to access to configuration "
-                   "files " ""),
+      description=("Library provides very flexible config file loading, in 1 line"),
       long_description=_LONG_DESC,
       author="Kevin Noel",
       author_email="",
       license="MIT",
       url="https://github.com/arita37/configmy",
       classifiers=_CLASSIFIERS,
-      packages=["anyconfig"],
+      packages=["configmy"],
       include_package_data=True,
       cmdclass={
           #"srpm": #SrpmCommand,
           #"rpm":  RpmCommand,
       },
-      entry_points=open(os.path.join(os.curdir, "pkg/entry_points.txt")).read(),
-      data_files=data_files)
+      entry_points= "",     # open(os.path.join(os.curdir, "pkg/entry_points.txt")).read(),
+      data_files=""   )     # data_files)
+
+
 
 # vim:sw=4:ts=4:et:
+
+
+
+
 
 
 
