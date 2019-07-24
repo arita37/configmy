@@ -1,3 +1,4 @@
+"""
 configmy
 Easiest config loader in Python
 
@@ -22,7 +23,7 @@ based on OS_NAME, USER_NAME, Python_version
 
 
 
-
+"""
 
 
 
